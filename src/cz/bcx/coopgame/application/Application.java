@@ -31,11 +31,16 @@ public class Application {
     }
 
     public enum KeyModifier {
-        NONE    (0x0000),
-        SHIFT   (GLFW.GLFW_MOD_SHIFT),
-        CONTROL (GLFW.GLFW_MOD_CONTROL),
-        ALT     (GLFW.GLFW_MOD_ALT),
-        SUPER   (GLFW.GLFW_MOD_SUPER);
+        NONE              (0x0000),
+        SHIFT             (GLFW.GLFW_MOD_SHIFT),
+        CONTROL           (GLFW.GLFW_MOD_CONTROL),
+        ALT               (GLFW.GLFW_MOD_ALT),
+        SHIFT_CONTROL     (SHIFT.keyModifier | CONTROL.keyModifier),
+        SHIFT_ALT         (SHIFT.keyModifier | ALT.keyModifier),
+        SHIFT_CONTROL_ALT (SHIFT.keyModifier | CONTROL.keyModifier | ALT.keyModifier),
+        CONTROL_ALT       (CONTROL.keyModifier | ALT.keyModifier);
+        //Fuck super key! Who uses super key anyway?
+        //Looking at you OSX users!
 
         private int keyModifier;
 
@@ -56,7 +61,17 @@ public class Application {
         public KeyAction    action;
         public KeyModifier  modifier;
 
+        public KeyboardEvent() {
+            this(-1, KeyAction.PRESSED, KeyModifier.NONE);
+        }
+
         public KeyboardEvent(int key, KeyAction action, KeyModifier modifier) {
+            this.key = key;
+            this.action = action;
+            this.modifier = modifier;
+        }
+
+        public void set(int key, KeyAction action, KeyModifier modifier) {
             this.key = key;
             this.action = action;
             this.modifier = modifier;
@@ -72,6 +87,8 @@ public class Application {
 /////                   Application                     /////
 /////////////////////////////////////////////////////////////
     private static final int APPLICATION_BATCH_MAX_ENTITIES = 16; //TODO - Tweak
+
+    private final KeyboardEvent lastKeyboardEvent = new KeyboardEvent(0, KeyAction.PRESSED, KeyModifier.NONE);
 
     private StandardBatch applicationBatch;
     private ScreenManager screenManager;
@@ -92,10 +109,8 @@ public class Application {
     }
 
     public void handleKeyboardEvent(int key, int action, int mods) {
-        KeyboardEvent keyboardEvent = new KeyboardEvent(key, KeyAction.getKeyAction(action), KeyModifier.getModifier(mods));
-        //TODO - Input event polling (dont create instance of KeyboardEvent every damn time you fag!
-
-        screenManager.handleKeyboardEvent(keyboardEvent);
+        lastKeyboardEvent.set(key, KeyAction.getKeyAction(action), KeyModifier.getModifier(mods));
+        screenManager.handleKeyboardEvent(lastKeyboardEvent);
     }
 
     public void update(float delta) {
