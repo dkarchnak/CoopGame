@@ -10,18 +10,18 @@ import cz.bcx.coopgame.util.Color;
 /**
  * Created by BCX on 7/26/2016.
  */
-public class IntroScreen extends AbstractScreen {
+public class IntroScreen2 extends AbstractScreen {
 
     private Texture texture;
     private TextureRegion region;
 
-    public IntroScreen(ScreenManager screenManager) {
+    public IntroScreen2(ScreenManager screenManager) {
         super(screenManager);
     }
 
     @Override
     public void loadResources() {
-        texture = new Texture("res/placeholder.png");
+        texture = new Texture("res/placeholder2.jpg");
         region  = new TextureRegion(texture, 0f, 0f, 1f, 1f);
     }
 
@@ -52,7 +52,7 @@ public class IntroScreen extends AbstractScreen {
 
     @Override
     public void handleKeyboardEvent(Application.KeyboardEvent keyboardEvent) {
-        if(keyboardEvent.action == Application.KeyAction.PRESSED) getScreenManager().changeScreen(IntroScreen2.class, new FadeScreenTransition(1000));
+        if(keyboardEvent.action == Application.KeyAction.PRESSED) getScreenManager().changeScreen(IntroScreen.class, new FadeScreenTransition(1000));
         Log.debug(getClass(), keyboardEvent);
     }
 }

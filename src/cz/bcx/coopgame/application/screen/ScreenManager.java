@@ -3,6 +3,7 @@ package cz.bcx.coopgame.application.screen;
 import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.Application;
+import cz.bcx.coopgame.application.screen.transition.AbstractScreenTransition;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,8 +25,7 @@ public class ScreenManager {
                 e.printStackTrace();
             }
 
-            //TODO
-            return null;
+            throw new RuntimeException("Cannot create a screen for class: " + screenClass);
         }
     }
 
@@ -37,6 +37,10 @@ public class ScreenManager {
     private FrameBufferObject screenFrameBuffer;
 
     private AbstractScreen currentScreen;
+    private AbstractScreen nextScreen;
+
+    private AbstractScreenTransition currentScreenTransition;
+    private boolean changingScreens = false;
 
     public ScreenManager(Application application) {
         this.application = application;
@@ -48,15 +52,46 @@ public class ScreenManager {
     }
 
     public void handleKeyboardEvent(Application.KeyboardEvent keyboardEvent) {
-        this.currentScreen.handleKeyboardEvent(keyboardEvent);
+        currentScreen.handleKeyboardEvent(keyboardEvent);
+    }
+
+    public void changeScreen(Class<? extends AbstractScreen> screen, AbstractScreenTransition screenTransition) {
+        if(isChangingScreens()) return;
+        changingScreens = true;
+
+        nextScreen = ScreenFactory.createScreen(screen, this);
+        nextScreen.loadResources();
+
+        currentScreenTransition = screenTransition;
+        currentScreenTransition.initialize(currentScreen, nextScreen);
+    }
+
+    public boolean isChangingScreens() {
+        return changingScreens;
     }
 
     public void update(float delta) {
-        this.currentScreen.update(delta);
+        if(isChangingScreens()) {
+            currentScreenTransition.update(delta);
+
+            if(currentScreenTransition.isFinished()) {
+                changingScreens = false;
+                currentScreen.destroyResources();
+                currentScreen = nextScreen;
+                currentScreenTransition = null;
+                nextScreen = null;
+            }
+        }
+        else {
+            currentScreen.update(delta);
+        }
     }
 
     public void draw() {
-        this.currentScreen.draw();
+        if(isChangingScreens())
+            currentScreenTransition.draw();
+        else
+            currentScreen.draw();
     }
 
     public StandardBatch getScreenStandardBatch() {

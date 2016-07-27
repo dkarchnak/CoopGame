@@ -2,14 +2,9 @@ package cz.bcx.coopgame.application;
 
 import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
-import cz.bcx.coopgame.Texture;
-import cz.bcx.coopgame.TextureRegion;
 import cz.bcx.coopgame.application.screen.ScreenManager;
 import cz.bcx.coopgame.util.Color;
 import org.lwjgl.glfw.GLFW;
-
-import static cz.bcx.coopgame.application.Main.HEIGHT;
-import static cz.bcx.coopgame.application.Main.WIDTH;
 
 public class Application {
 
@@ -69,7 +64,7 @@ public class Application {
 
         @Override
         public String toString() {
-            return "[KeyboardEvent] Key: " + key + ", KeyAction: " + action + ((modifier != KeyModifier.NONE) ? (", Modifier: " + modifier) : "");
+            return "[" + getClass().getSimpleName() + "] Key: " + key + ", KeyAction: " + action + ((modifier != KeyModifier.NONE) ? (", Modifier: " + modifier) : "");
         }
     }
 

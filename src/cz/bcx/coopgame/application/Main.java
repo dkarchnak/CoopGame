@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Main {
-    public static String WINDOW_TITLE = "Hello world!";
+    public static String WINDOW_TITLE = "Coop Game INDEV";
     public static int    WIDTH        = 1280;
     public static int    HEIGHT       = (int) (WIDTH / 16f * 9f);
 
@@ -92,22 +92,27 @@ public class Main {
     private void loop() {
         GL.createCapabilities();
 
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         this.application = new Application(WIDTH, HEIGHT);
 
-        long startTime = System.currentTimeMillis();
+        long fpsStartTime = System.currentTimeMillis();
         int fpsCounter = 0;
 
+        long deltaStartTime = System.currentTimeMillis();
+
         while ( glfwWindowShouldClose(window) == GLFW_FALSE) {
-            application.update(0.2f); //TODO
+            float deltaTime = System.currentTimeMillis() - deltaStartTime;
+            deltaStartTime = System.currentTimeMillis();
+            application.update(deltaTime);
             application.draw();
 
             glfwSwapBuffers(window); // swap the color buffers
             glfwPollEvents();
 
-            if(System.currentTimeMillis() - startTime >= 1000) {
-                startTime = System.currentTimeMillis();
+            if(System.currentTimeMillis() - fpsStartTime >= 1000) {
+                fpsStartTime = System.currentTimeMillis();
                 glfwSetWindowTitle(window, WINDOW_TITLE + " FPS:" + fpsCounter);
                 fpsCounter = 0;
             }

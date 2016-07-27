@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
 
 /**
  * Created by bcx on 9.5.16.
- * TODO: Make Batch as an interface or abstract class with methods like flush, begin, end etc...
+ * TODO: Make Batch as an interface or abstract class with methods like flush, begin, finish etc...
  */
 public class StandardBatch {
     private static final String DEFAULT_VERTEX_SHADER =

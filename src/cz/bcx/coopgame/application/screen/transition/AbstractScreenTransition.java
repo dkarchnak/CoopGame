@@ -1,6 +1,5 @@
 package cz.bcx.coopgame.application.screen.transition;
 
-import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.screen.AbstractScreen;
 import cz.bcx.coopgame.util.MathUtil;
 
@@ -10,11 +9,11 @@ import cz.bcx.coopgame.util.MathUtil;
 public abstract class AbstractScreenTransition {
     private static final int DEFAULT_DURATION = 1000; //ms
 
-    private StandardBatch  applicationBatch;
     private AbstractScreen previousScreen, nextScreen;
 
     private boolean initialized = false;
     private boolean started = false;
+    private boolean finished = false;
 
     private long startTime;
     private int duration;
@@ -27,30 +26,41 @@ public abstract class AbstractScreenTransition {
         this.duration = duration;
     }
 
-    public abstract void onDraw();
-    public abstract void onUpdate(float percentDone);
+    protected abstract void onDraw();
+    protected abstract void onUpdate(float delta);
 
-    public void initialize(StandardBatch applicationBatch, AbstractScreen previousScreen, AbstractScreen nextScreen) {
+    public void initialize(AbstractScreen previousScreen, AbstractScreen nextScreen) {
         initialized = true;
 
-        this.applicationBatch = applicationBatch;
         this.previousScreen = previousScreen;
         this.nextScreen = nextScreen;
     }
 
     public void update(float delta) {
-        if(started) start();
-        onUpdate(getPercentDone());
+        if(!started) start();
+
+        if(getPercentDone() >= 1 && !finished) finish();
+        else onUpdate(getPercentDone());
+    }
+
+    public void draw() {
+        onDraw();
     }
 
     private void start() {
         if(!initialized) throw new RuntimeException("You need to initialize screens transition before starting it!");
         started = true;
         startTime = System.currentTimeMillis();
+
+        previousScreen.onLeaving();
+        nextScreen.onEntering();
     }
 
-    public StandardBatch getApplicationBatch() {
-        return applicationBatch;
+    public void finish() {
+        finished = true;
+
+        previousScreen.onLeave();
+        nextScreen.onEnter();
     }
 
     public AbstractScreen getPreviousScreen() {
@@ -62,7 +72,11 @@ public abstract class AbstractScreenTransition {
     }
 
     public float getPercentDone() {
-        return MathUtil.clamp((startTime + System.currentTimeMillis()) / (float)(duration));
+        return MathUtil.clamp((System.currentTimeMillis() - startTime) / (float)(duration));
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     public int getDuration() {

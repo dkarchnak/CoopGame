@@ -26,4 +26,9 @@ public class Color {
         this.b = b;
         this.a = a;
     }
+
+    @Override
+    public String toString() {
+        return "[" + getClass().getSimpleName() + "] R:" + r + ", G:" + g + ", B:" + b + ", A:" + a;
+    }
 }

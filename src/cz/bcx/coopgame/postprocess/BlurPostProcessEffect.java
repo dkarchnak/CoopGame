@@ -2,7 +2,6 @@ package cz.bcx.coopgame.postprocess;
 
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.FrameBufferObject;
-import cz.bcx.coopgame.PostProcessEffect;
 import cz.bcx.coopgame.Texture;
 
 /**

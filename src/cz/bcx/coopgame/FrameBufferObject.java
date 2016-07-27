@@ -1,16 +1,20 @@
 package cz.bcx.coopgame;
 
+import cz.bcx.coopgame.util.Color;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
 /**
  * Created by bcx on 5/14/16.
  */
 public class FrameBufferObject {
+    private static final Color DEFAULT_CLEAR_COLOR = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+
     private int fboId;
     private Texture colorTexture;
 
@@ -36,10 +40,15 @@ public class FrameBufferObject {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        this.colorTexture = new Texture(colorTexture, width, height, 3);
+        this.colorTexture = new Texture(colorTexture, width, height, 4);
     }
 
     public static void clearFrameBuffer() {
+        clearFrameBuffer(DEFAULT_CLEAR_COLOR);
+    }
+
+    public static void clearFrameBuffer(Color color) {
+        glClearColor(color.r, color.g, color.b, color.a);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 

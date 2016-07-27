@@ -9,15 +9,21 @@ import cz.bcx.coopgame.application.Application;
 public abstract class AbstractScreen {
     private final ScreenManager screenManager;
 
+    private float screenAlpha = 1f;
+
     public AbstractScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
     public void loadResources() {};
+    public void destroyResources() {};
 
     //Screen life cycle methods
-    public void onEnter() {}
-    public void onLeave() {}
+    public void onEntering() {} //Transition start
+    public void onEnter() {}    //Transition finish
+
+    public void onLeaving() {} //Transition start
+    public void onLeave() {} //Transition finish
 
     public void onUpdate(float delta) {}
 
@@ -40,5 +46,13 @@ public abstract class AbstractScreen {
 
     public StandardBatch getScreenStandardBatch() {
         return screenManager.getScreenStandardBatch();
+    }
+
+    public void setScreenAlpha(float screenAlpha) {
+        this.screenAlpha = screenAlpha;
+    }
+
+    public float getScreenAlpha() {
+        return screenAlpha;
     }
 }

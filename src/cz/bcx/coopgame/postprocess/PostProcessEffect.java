@@ -1,6 +1,10 @@
-package cz.bcx.coopgame;
+package cz.bcx.coopgame.postprocess;
 
 import com.sun.istack.internal.NotNull;
+import cz.bcx.coopgame.FrameBufferObject;
+import cz.bcx.coopgame.StandardBatch;
+import cz.bcx.coopgame.Texture;
+import cz.bcx.coopgame.TextureRegion;
 import cz.bcx.coopgame.application.Main;
 
 /**
