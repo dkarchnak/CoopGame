@@ -104,13 +104,23 @@ public class StandardBatch {
     public StandardBatch(int maxEntitiesPerCall) {
         buffer = BufferUtils.createFloatBuffer(maxEntitiesPerCall * ENTITY_SIZE);
 
-        projectionMatrix = new Matrix4f().setOrtho2D(0, Main.WIDTH, 0, Main.HEIGHT);
-        projectionMatrix.get(matrixBuffer);
-
         vboId = GL15.glGenBuffers();
 
         defaultShader = new Shader(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER, VERTEX_ATTRIBUTES);
         currentShader = defaultShader;
+    }
+
+
+    public void setProjectionMatrix(Matrix4f projectionMatrix) {
+        this.projectionMatrix = projectionMatrix;
+    }
+
+    private void updateProjectionMatrixUniform() {
+        projectionMatrix.get(matrixBuffer);
+
+        //TODO Cache uniforms, add viewMatrix
+        int projectionMatrixLocation = GL20.glGetUniformLocation(currentShader.getProgramId(), "u_ProjMatrix");
+        GL20.glUniformMatrix4fv(projectionMatrixLocation, false, matrixBuffer);
     }
 
     public void begin() {
@@ -156,9 +166,10 @@ public class StandardBatch {
             buffer.flip();
 
             currentShader.use();
-            int projectionMatrixLocation = GL20.glGetUniformLocation(currentShader.getProgramId(), "u_ProjMatrix");
-            GL20.glUniformMatrix4fv(projectionMatrixLocation, false, matrixBuffer);
 
+            updateProjectionMatrixUniform();
+
+            //TODO - Cache uniforms
             int colorTextureLocation = GL20.glGetUniformLocation(currentShader.getProgramId(), "u_TexColor");
             GL20.glUniform1i(colorTextureLocation, 0); //Uses only one texture
 

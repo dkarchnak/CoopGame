@@ -4,6 +4,7 @@ import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.screen.transition.AbstractScreenTransition;
+import org.joml.Matrix4f;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -45,6 +46,7 @@ public class ScreenManager {
     public ScreenManager(Application application) {
         this.application = application;
         this.screenStandardBatch = new StandardBatch();
+        this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, application.getWindowWidth(), 0, application.getWindowHeight()));
         this.screenFrameBuffer = new FrameBufferObject(application.getWindowWidth(), application.getWindowHeight());
 
         this.currentScreen = ScreenFactory.createScreen(INITIAL_SCREEN, this);
@@ -70,6 +72,11 @@ public class ScreenManager {
         return changingScreens;
     }
 
+    public void onWindowResized(int width, long height) {
+        //TODO
+        this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, width, 0, height));
+    }
+
     public void update(float delta) {
         if(isChangingScreens()) {
             currentScreenTransition.update(delta);
@@ -88,10 +95,15 @@ public class ScreenManager {
     }
 
     public void draw() {
+        screenFrameBuffer.bindFrameBuffer();
+        FrameBufferObject.clearFrameBuffer();
+
         if(isChangingScreens())
             currentScreenTransition.draw();
         else
             currentScreen.draw();
+
+        screenFrameBuffer.unbindFrameBuffer();
     }
 
     public StandardBatch getScreenStandardBatch() {

@@ -4,6 +4,7 @@ import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.screen.ScreenManager;
 import cz.bcx.coopgame.util.Color;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 public class Application {
@@ -100,12 +101,17 @@ public class Application {
         this.windowHeight = windowHeight;
 
         this.applicationBatch = new StandardBatch(APPLICATION_BATCH_MAX_ENTITIES);
+        this.applicationBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, windowWidth, 0, windowHeight));
+
         this.screenManager = new ScreenManager(this);
     }
 
     public void onWindowResized(int width, int height) {
         this.windowWidth  = width;
         this.windowHeight = height;
+
+        applicationBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, width, 0, height));
+        screenManager.onWindowResized(width, height);
     }
 
     public void handleKeyboardEvent(int key, int action, int mods) {
@@ -119,10 +125,7 @@ public class Application {
 
     public void draw() {
         //Draws screens to screen frame buffer
-        screenManager.getScreenFrameBuffer().bindFrameBuffer();
-        FrameBufferObject.clearFrameBuffer();
         screenManager.draw();
-        screenManager.getScreenFrameBuffer().unbindFrameBuffer();
 
         //Draws screen frame buffer to the screen
         FrameBufferObject.clearFrameBuffer();

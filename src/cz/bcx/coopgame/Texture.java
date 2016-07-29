@@ -41,6 +41,7 @@ public class Texture {
         this.height = height.get();
         this.components = comps.get();
 
+        //TODO - Refactor texture format and components field
         int format = components == 3 ? GL11.GL_RGB : GL11.GL_RGBA;
 
         bind();
