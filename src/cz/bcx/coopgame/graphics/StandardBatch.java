@@ -1,6 +1,5 @@
-package cz.bcx.coopgame;
+package cz.bcx.coopgame.graphics;
 
-import cz.bcx.coopgame.application.Main;
 import cz.bcx.coopgame.util.Color;
 import cz.bcx.coopgame.util.MathUtil;
 import org.joml.Matrix4f;

@@ -1,7 +1,7 @@
 package cz.bcx.coopgame.application.screen;
 
-import cz.bcx.coopgame.Texture;
-import cz.bcx.coopgame.TextureRegion;
+import cz.bcx.coopgame.graphics.Texture;
+import cz.bcx.coopgame.graphics.TextureRegion;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.Log;
 import cz.bcx.coopgame.application.screen.transition.FadeScreenTransition;

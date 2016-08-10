@@ -1,4 +1,4 @@
-package cz.bcx.coopgame;
+package cz.bcx.coopgame.graphics;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

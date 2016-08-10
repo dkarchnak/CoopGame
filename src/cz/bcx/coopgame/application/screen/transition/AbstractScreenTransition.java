@@ -1,7 +1,7 @@
 package cz.bcx.coopgame.application.screen.transition;
 
-import cz.bcx.coopgame.StandardBatch;
-import cz.bcx.coopgame.Texture;
+import cz.bcx.coopgame.graphics.StandardBatch;
+import cz.bcx.coopgame.graphics.Texture;
 import cz.bcx.coopgame.application.screen.AbstractScreen;
 import cz.bcx.coopgame.util.MathUtil;
 

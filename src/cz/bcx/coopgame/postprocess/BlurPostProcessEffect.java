@@ -1,8 +1,8 @@
 package cz.bcx.coopgame.postprocess;
 
-import cz.bcx.coopgame.StandardBatch;
-import cz.bcx.coopgame.FrameBufferObject;
-import cz.bcx.coopgame.Texture;
+import cz.bcx.coopgame.graphics.StandardBatch;
+import cz.bcx.coopgame.graphics.FrameBufferObject;
+import cz.bcx.coopgame.graphics.Texture;
 
 /**
  * Created by BCX on 6/29/16.

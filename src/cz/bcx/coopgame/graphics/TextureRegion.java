@@ -1,4 +1,4 @@
-package cz.bcx.coopgame;
+package cz.bcx.coopgame.graphics;
 
 /**
  * Created by bcx on 5/14/16.

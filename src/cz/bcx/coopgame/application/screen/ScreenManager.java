@@ -1,7 +1,7 @@
 package cz.bcx.coopgame.application.screen;
 
-import cz.bcx.coopgame.FrameBufferObject;
-import cz.bcx.coopgame.StandardBatch;
+import cz.bcx.coopgame.graphics.FrameBufferObject;
+import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.screen.transition.AbstractScreenTransition;
 import org.joml.Matrix4f;
