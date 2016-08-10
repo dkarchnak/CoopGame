@@ -1,5 +1,7 @@
 package cz.bcx.coopgame.application.screen.transition;
 
+import cz.bcx.coopgame.StandardBatch;
+import cz.bcx.coopgame.Texture;
 import cz.bcx.coopgame.application.screen.AbstractScreen;
 import cz.bcx.coopgame.util.MathUtil;
 
@@ -26,7 +28,7 @@ public abstract class AbstractScreenTransition {
         this.duration = duration;
     }
 
-    protected abstract void onDraw();
+    protected abstract void onDraw(StandardBatch batch, Texture currentScreenTexture, Texture nextScreenTexture);
     protected abstract void onUpdate(float delta);
 
     public void initialize(AbstractScreen previousScreen, AbstractScreen nextScreen) {
@@ -43,8 +45,8 @@ public abstract class AbstractScreenTransition {
         else onUpdate(getPercentDone());
     }
 
-    public void draw() {
-        onDraw();
+    public void draw(StandardBatch batch, Texture currentScreenTexture, Texture nextScreenTexure) {
+        onDraw(batch, currentScreenTexture, nextScreenTexure);
     }
 
     private void start() {
@@ -52,6 +54,7 @@ public abstract class AbstractScreenTransition {
         started = true;
         startTime = System.currentTimeMillis();
 
+        //TODO Let screen manager handle this
         previousScreen.onLeaving();
         nextScreen.onEntering();
     }
@@ -59,6 +62,7 @@ public abstract class AbstractScreenTransition {
     public void finish() {
         finished = true;
 
+        //TODO Let screen manager handle this
         previousScreen.onLeave();
         nextScreen.onEnter();
     }

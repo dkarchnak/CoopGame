@@ -1,5 +1,9 @@
 package cz.bcx.coopgame.application.screen.transition;
 
+import cz.bcx.coopgame.StandardBatch;
+import cz.bcx.coopgame.Texture;
+import cz.bcx.coopgame.application.Main;
+
 /**
  * Created by BCX on 7/26/2016.
  */
@@ -11,15 +15,13 @@ public class FadeScreenTransition extends AbstractScreenTransition {
     }
 
     @Override
-    public void onDraw() {
-        if(getPercentDone() < 0.5) {
-            getPreviousScreen().setScreenAlpha(alpha);
-            getPreviousScreen().draw();
-        }
-        else {
-            getNextScreen().setScreenAlpha(alpha);
-            getNextScreen().draw();
-        }
+    public void onDraw(StandardBatch batch, Texture currentScreenTexture, Texture nextScreenTexture) {
+        batch.setAlpha(alpha);
+
+        if(getPercentDone() < 0.5)
+            batch.draw(currentScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT, 0, 0, 1, 1);
+        else
+            batch.draw(nextScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT, 0, 0, 1, 1);
     }
 
     @Override

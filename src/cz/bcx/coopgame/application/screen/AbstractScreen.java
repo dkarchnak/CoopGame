@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.application.screen;
 
+import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.Application;
 
@@ -9,10 +10,11 @@ import cz.bcx.coopgame.application.Application;
 public abstract class AbstractScreen {
     private final ScreenManager screenManager;
 
-    private float screenAlpha = 1f;
+    private FrameBufferObject screenFrameBuffer;
 
     public AbstractScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+        this.screenFrameBuffer = new FrameBufferObject(screenManager.getWindowWidth(), screenManager.getWindowHeight());
     }
 
     public void loadResources() {};
@@ -37,22 +39,21 @@ public abstract class AbstractScreen {
     }
 
     public void draw() {
+        screenFrameBuffer.bindFrameBuffer();
+        FrameBufferObject.clearFrameBuffer();
         onDraw();
+        screenFrameBuffer.unbindFrameBuffer();
     }
 
     public ScreenManager getScreenManager() {
         return screenManager;
     }
 
+    public FrameBufferObject getScreenFrameBuffer() {
+        return screenFrameBuffer;
+    }
+
     public StandardBatch getScreenStandardBatch() {
         return screenManager.getScreenStandardBatch();
-    }
-
-    public void setScreenAlpha(float screenAlpha) {
-        this.screenAlpha = screenAlpha;
-    }
-
-    public float getScreenAlpha() {
-        return screenAlpha;
     }
 }

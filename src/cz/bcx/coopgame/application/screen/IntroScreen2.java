@@ -5,7 +5,6 @@ import cz.bcx.coopgame.TextureRegion;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.Log;
 import cz.bcx.coopgame.application.screen.transition.FadeScreenTransition;
-import cz.bcx.coopgame.util.Color;
 
 /**
  * Created by BCX on 7/26/2016.
@@ -37,9 +36,6 @@ public class IntroScreen2 extends AbstractScreen {
     @Override
     public void onDraw() {
         getScreenStandardBatch().begin();
-            getScreenStandardBatch().setColor(Color.WHITE);
-            getScreenStandardBatch().setAlpha(getScreenAlpha());
-
             getScreenStandardBatch().draw(
                     region,
                     getScreenManager().getWindowWidth() / 2 - 200,

@@ -35,7 +35,7 @@ public class ScreenManager {
     private final Application application;
 
     private StandardBatch screenStandardBatch;
-    private FrameBufferObject screenFrameBuffer;
+    private FrameBufferObject screenManagerFrameBuffer;
 
     private AbstractScreen currentScreen;
     private AbstractScreen nextScreen;
@@ -47,7 +47,7 @@ public class ScreenManager {
         this.application = application;
         this.screenStandardBatch = new StandardBatch();
         this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, application.getWindowWidth(), 0, application.getWindowHeight()));
-        this.screenFrameBuffer = new FrameBufferObject(application.getWindowWidth(), application.getWindowHeight());
+        this.screenManagerFrameBuffer = new FrameBufferObject(application.getWindowWidth(), application.getWindowHeight());
 
         this.currentScreen = ScreenFactory.createScreen(INITIAL_SCREEN, this);
         this.currentScreen.loadResources();
@@ -73,7 +73,7 @@ public class ScreenManager {
     }
 
     public void onWindowResized(int width, long height) {
-        //TODO
+        //TODO resize FBOs
         this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, width, 0, height));
     }
 
@@ -95,23 +95,51 @@ public class ScreenManager {
     }
 
     public void draw() {
-        screenFrameBuffer.bindFrameBuffer();
-        FrameBufferObject.clearFrameBuffer();
+        if(isChangingScreens()) {
+            nextScreen.draw();
 
-        if(isChangingScreens())
-            currentScreenTransition.draw();
-        else
+            screenManagerFrameBuffer.bindFrameBuffer();
+            FrameBufferObject.clearFrameBuffer();
+
+            getApplicationBatch().begin();
+            currentScreenTransition.draw(
+                    getApplicationBatch(),
+                    currentScreen.getScreenFrameBuffer().getColorTexture(),
+                    nextScreen.getScreenFrameBuffer().getColorTexture()
+            );
+            getApplicationBatch().end();
+
+            screenManagerFrameBuffer.unbindFrameBuffer();
+        }
+        else {
             currentScreen.draw();
 
-        screenFrameBuffer.unbindFrameBuffer();
+            screenManagerFrameBuffer.bindFrameBuffer();
+            FrameBufferObject.clearFrameBuffer();
+
+            getApplicationBatch().begin();
+            getApplicationBatch().draw(
+                    currentScreen.getScreenFrameBuffer().getColorTexture(),
+                    0, 0,
+                    getWindowWidth(),
+                    getWindowHeight(),
+                    0, 0, 1, 1
+            );
+            getApplicationBatch().end();
+            screenManagerFrameBuffer.unbindFrameBuffer();
+        }
+    }
+
+    public StandardBatch getApplicationBatch() {
+        return application.getApplicationBatch();
     }
 
     public StandardBatch getScreenStandardBatch() {
         return screenStandardBatch;
     }
 
-    public FrameBufferObject getScreenFrameBuffer() {
-        return screenFrameBuffer;
+    public FrameBufferObject getScreenManagerFrameBuffer() {
+        return screenManagerFrameBuffer;
     }
 
     public int getWindowWidth() {

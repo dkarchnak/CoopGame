@@ -2,6 +2,7 @@ package cz.bcx.coopgame.application;
 
 import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
+import cz.bcx.coopgame.application.screen.AbstractScreen;
 import cz.bcx.coopgame.application.screen.ScreenManager;
 import cz.bcx.coopgame.util.Color;
 import org.joml.Matrix4f;
@@ -131,7 +132,7 @@ public class Application {
         FrameBufferObject.clearFrameBuffer();
         applicationBatch.begin();
         applicationBatch.setColor(Color.WHITE);
-        applicationBatch.draw(screenManager.getScreenFrameBuffer().getColorTexture(), 0, 0, windowWidth, windowHeight, 0, 0, 1, 1);
+        applicationBatch.draw(screenManager.getScreenManagerFrameBuffer().getColorTexture(), 0, 0, windowWidth, windowHeight, 0, 0, 1, 1);
         applicationBatch.end();
     }
 
