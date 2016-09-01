@@ -1,6 +1,5 @@
 package cz.bcx.coopgame;
 
-import cz.bcx.coopgame.application.Main;
 import cz.bcx.coopgame.util.Color;
 import cz.bcx.coopgame.util.MathUtil;
 import org.joml.Matrix4f;
@@ -18,51 +17,15 @@ import java.nio.FloatBuffer;
  * TODO: Make Batch as an interface or abstract class with methods like flush, begin, finish etc...
  */
 public class StandardBatch {
-    private static final String DEFAULT_VERTEX_SHADER =
-            "#version 130 \n" +
-            "in vec2 in_Position; \n" +
-            "in vec4 in_Color; \n" +
-            "in vec2 in_TexCoords; \n\n" +
-
-            "uniform mat4 u_ProjMatrix; \n" +
-            "uniform sampler2D u_TexColor; \n" + //TODO texture id or something
-
-            "out vec2 v_FragPosition; \n" +
-            "out vec4 v_Color; \n" +
-            "out vec2 v_TexCoords; \n\n" +
-
-            "void main() { \n" +
-            "   v_Color = in_Color; \n" +
-            "   v_TexCoords = in_TexCoords;\n" +
-            "   v_FragPosition = in_Position; \n " +
-            "   gl_Position = u_ProjMatrix * vec4(in_Position, 0, 1); \n" +
-            "}";
-
-    private static final String DEFAULT_FRAGMENT_SHADER =
-            "#version 130 \n" +
-            "precision highp float; \n" +
-
-            "uniform mat4 u_ProjMatrix; \n" +
-            "uniform sampler2D u_TexColor; \n" +
-
-            "in vec2 v_FragPosition; \n" +
-            "in vec4 v_Color; \n" +
-            "in vec2 v_TexCoords; \n" +
-            "out vec4 out_Color; \n\n" +
-
-
-            "void main() { \n" +
-            "   vec4 texColor = texture2D(u_TexColor, v_TexCoords.xy); \n" +
-            "   out_Color = v_Color * texColor; \n" +
-            "}";
+    private static final String            DEFAULT_SHADER_NAME  = "StandardBatchShader";
 
     private static final int               DEFAULT_MAX_ENTITIES_PER_CALL = 1024;
 
-    private static final VertexAttribute   ATTRIBUTE_POSITION   = new VertexAttribute(0, "in_Position");
-    private static final VertexAttribute   ATTRIBUTE_COLOR      = new VertexAttribute(1, "in_Color");
-    private static final VertexAttribute   ATTRIBUTE_TEX_COORDS = new VertexAttribute(2, "in_TexCoords");
+    public static  final VertexAttribute   ATTRIBUTE_POSITION   = new VertexAttribute(0, "in_Position");
+    public static  final VertexAttribute   ATTRIBUTE_COLOR      = new VertexAttribute(1, "in_Color");
+    public static  final VertexAttribute   ATTRIBUTE_TEX_COORDS = new VertexAttribute(2, "in_TexCoords");
 
-    private static final VertexAttribute[] VERTEX_ATTRIBUTES    = new VertexAttribute[] {
+    public static final VertexAttribute[]  VERTEX_ATTRIBUTES    = new VertexAttribute[] {
         ATTRIBUTE_POSITION,
         ATTRIBUTE_COLOR,
         ATTRIBUTE_TEX_COORDS
@@ -75,7 +38,7 @@ public class StandardBatch {
     private static final int    ENTITY_VERTICES_COUNT = 6;
     private static final int    ENTITY_SIZE           = ENTITY_VERTICES_COUNT * (POSITION_SIZE + COLOR_SIZE);
 
-    private static final int    DRAWING_MODE  = GL11.GL_TRIANGLES;
+    private static final int   DRAWING_MODE  = GL11.GL_TRIANGLES;
     private static final Color DEFAULT_COLOR = Color.WHITE;
 
     /** FIELDS **/
@@ -106,7 +69,7 @@ public class StandardBatch {
 
         vboId = GL15.glGenBuffers();
 
-        defaultShader = new Shader(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER, VERTEX_ATTRIBUTES);
+        defaultShader = new Shader(DEFAULT_SHADER_NAME, VERTEX_ATTRIBUTES);
         currentShader = defaultShader;
     }
 

@@ -3,14 +3,25 @@ package cz.bcx.coopgame;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import java.io.*;
+
 /**
  * Created by bcx on 9.5.16.
  */
 public class Shader {
+    public  static final String VERTEX_SHADER_EXT   = ".vs";
+    public  static final String FRAGMENT_SHADER_EXT = ".fs";
+
+    private static final String SHADERS_PATH        = "res/shaders/";
+
     private int     programId;
     private String  vertexShaderSource, fragmentShaderSource;
 
-    public Shader(String vertexShaderSource, String fragmentShaderSource, VertexAttribute... vertexAttributes) {
+    public Shader(String fileName, VertexAttribute ... vertexAttributes) {
+        this(loadShaderFromFile(SHADERS_PATH + fileName + VERTEX_SHADER_EXT), loadShaderFromFile(SHADERS_PATH + fileName + FRAGMENT_SHADER_EXT), vertexAttributes);
+    }
+
+    private Shader(String vertexShaderSource, String fragmentShaderSource, VertexAttribute ... vertexAttributes) {
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
 
@@ -30,6 +41,30 @@ public class Shader {
         GL20.glValidateProgram(programId);
 
         if(GL20.glGetProgrami(programId, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) throw new RuntimeException("Cannot validate shader: " + GL20.glGetShaderInfoLog(programId, 1024));
+    }
+
+    public static final String loadShaderFromFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            if(!file.exists()) throw new RuntimeException("Cannot load shader from file: " + fileName);
+
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            while((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+
+            bufferedReader.close();
+            return sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void bindAttributes(VertexAttribute[] vertexAttributes) {
