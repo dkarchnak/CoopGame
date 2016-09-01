@@ -25,10 +25,18 @@ public class StandardBatch {
     public static  final VertexAttribute   ATTRIBUTE_COLOR      = new VertexAttribute(1, "in_Color");
     public static  final VertexAttribute   ATTRIBUTE_TEX_COORDS = new VertexAttribute(2, "in_TexCoords");
 
-    public static final VertexAttribute[]  VERTEX_ATTRIBUTES    = new VertexAttribute[] {
+    public static  final VertexAttribute[]  VERTEX_ATTRIBUTES    = new VertexAttribute[] {
         ATTRIBUTE_POSITION,
         ATTRIBUTE_COLOR,
         ATTRIBUTE_TEX_COORDS
+    };
+
+    public static  final String  UNIFORM_PROJECTION_MATRIX  = "u_ProjMatrix";
+    public static  final String  UNIFORM_COLOR_TEXTURE_UNIT = "u_TexColor";
+
+    public static final String[] UNIFORMS = new String[] {
+        UNIFORM_PROJECTION_MATRIX,
+        UNIFORM_COLOR_TEXTURE_UNIT
     };
 
     private static final int    POSITION_SIZE         = 2; //2 floats per position
@@ -43,7 +51,6 @@ public class StandardBatch {
 
     /** FIELDS **/
     private Matrix4f projectionMatrix;
-    private FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4*4);
 
     private static Shader defaultShader;
     private Shader currentShader;
@@ -69,21 +76,13 @@ public class StandardBatch {
 
         vboId = GL15.glGenBuffers();
 
-        defaultShader = new Shader(DEFAULT_SHADER_NAME, VERTEX_ATTRIBUTES);
+        defaultShader = new Shader(DEFAULT_SHADER_NAME, UNIFORMS, VERTEX_ATTRIBUTES);
         currentShader = defaultShader;
     }
 
 
     public void setProjectionMatrix(Matrix4f projectionMatrix) {
         this.projectionMatrix = projectionMatrix;
-    }
-
-    private void updateProjectionMatrixUniform() {
-        projectionMatrix.get(matrixBuffer);
-
-        //TODO Cache uniforms, add viewMatrix
-        int projectionMatrixLocation = GL20.glGetUniformLocation(currentShader.getProgramId(), "u_ProjMatrix");
-        GL20.glUniformMatrix4fv(projectionMatrixLocation, false, matrixBuffer);
     }
 
     public void begin() {
@@ -130,14 +129,10 @@ public class StandardBatch {
 
             currentShader.use();
 
-            updateProjectionMatrixUniform();
+            currentShader.setUniformValueMat4f(UNIFORM_PROJECTION_MATRIX, projectionMatrix);
+            currentShader.setUniformValue1i(UNIFORM_COLOR_TEXTURE_UNIT, 0);
 
-            //TODO - Cache uniforms
-            int colorTextureLocation = GL20.glGetUniformLocation(currentShader.getProgramId(), "u_TexColor");
-            GL20.glUniform1i(colorTextureLocation, 0); //Uses only one texture
-
-            if(vaoId == -1)
-                prepareVAO();
+            if(vaoId == -1) prepareVAO();
 
             GL30.glBindVertexArray(vaoId);
 
