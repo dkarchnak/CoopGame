@@ -73,8 +73,9 @@ public class ScreenManager {
     }
 
     public void onWindowResized(int width, long height) {
-        //TODO
         this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, width, 0, height));
+        currentScreen.onWindowResized(width, height);
+        if(nextScreen != null) nextScreen.onWindowResized(width, height);
     }
 
     public void update(float delta) {

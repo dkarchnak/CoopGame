@@ -25,42 +25,37 @@ public class GreyScalePostProcessEffect extends PostProcessEffect {
     //TODO - Create GreyScaleShader class extending Shader
     private static Shader greyScaleShader;
 
-    private boolean increasing = false;
-    private float   strength   = 1f;
+    private float   strength       = 1f;
+    private boolean updateUniforms = true;
 
     public GreyScalePostProcessEffect(float strength) {
-        this.strength = MathUtil.clamp(strength, 0f, 1f);
+        setStrength(strength);
 
         if(greyScaleShader == null) initializeShader();
+    }
+
+    public void setStrength(float value) {
+        this.strength = MathUtil.clamp(value, 0f, 1f);
+        updateUniforms = true;
     }
 
     private void initializeShader() {
         greyScaleShader = new Shader(GREY_SCALE_SHADER_NAME, UNIFORMS, StandardBatch.VERTEX_ATTRIBUTES);
     }
 
-    public void update(float delta) {
-        //TODO remove
-        float value = (delta / 1000f) / 3f;
-
-        if(increasing) strength += value;
-        else strength -= value;
-
-        if(strength <= 0) {
-            increasing = true;
-        }
-        if(strength >= 1)
-            increasing = false;
-    }
-
     @Override
     public void apply(StandardBatch batch, Texture sourceTexture) {
+        if(updateUniforms) {
+            greyScaleShader.use();
+            greyScaleShader.setUniformValue1f(UNIFORM_GREY_SCALE_STRENGTH, strength);
+            updateUniforms = false;
+        }
+
         getResultFrameBuffer().bindFrameBuffer();
+        FrameBufferObject.clearFrameBuffer();
+
         batch.begin();
         batch.setShader(greyScaleShader);
-
-        greyScaleShader.use();
-        greyScaleShader.setUniformValue1f(UNIFORM_GREY_SCALE_STRENGTH, strength);
-
         batch.draw(sourceTexture, 0, 0, getResultFrameBuffer().getWidth(), getResultFrameBuffer().getHeight(), 0, 0, 1, 1);
         batch.setShader(null);
         batch.end();

@@ -10,6 +10,5 @@ in vec2 v_TexCoords;
 out vec4 out_Color;
 
 void main() {
-   vec4 texColor = texture2D(u_TexColor, v_TexCoords.xy);
-   out_Color = v_Color * texColor;
+    out_Color = v_Color * texture2D(u_TexColor, v_TexCoords.xy);
 }

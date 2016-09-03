@@ -27,11 +27,12 @@ public class Shader {
 
     private HashMap<String, Integer> uniforms;
 
+    //TODO - Add some sort of shader manager, which loads all shaders at once
     public Shader(String fileName, String[] uniforms, VertexAttribute[] vertexAttributes) {
         this(loadShaderFromFile(SHADERS_PATH + fileName + VERTEX_SHADER_EXT), loadShaderFromFile(SHADERS_PATH + fileName + FRAGMENT_SHADER_EXT), uniforms, vertexAttributes);
     }
 
-    private Shader(String vertexShaderSource, String fragmentShaderSource, String[] uniforms, VertexAttribute ... vertexAttributes) {
+    private Shader(String vertexShaderSource, String fragmentShaderSource, String[] uniforms, VertexAttribute[] vertexAttributes) {
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
 
@@ -130,7 +131,7 @@ public class Shader {
         return fragmentShaderSource;
     }
 
-    ///////////// UNIFORMS SET ////////////////
+    ///////////// BLUR_SHADER_UNIFORMS SET ////////////////
     public void setUniformValue1f(String uniformName, float value) {
         GL20.glUniform1f(this.uniforms.get(uniformName), value);
     }

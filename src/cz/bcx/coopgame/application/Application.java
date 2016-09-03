@@ -3,6 +3,7 @@ package cz.bcx.coopgame.application;
 import cz.bcx.coopgame.FrameBufferObject;
 import cz.bcx.coopgame.StandardBatch;
 import cz.bcx.coopgame.application.screen.ScreenManager;
+import cz.bcx.coopgame.postprocess.BlurPostProcessEffect;
 import cz.bcx.coopgame.postprocess.GreyScalePostProcessEffect;
 import cz.bcx.coopgame.util.Color;
 import org.joml.Matrix4f;
@@ -97,8 +98,6 @@ public class Application {
 
     private int windowWidth, windowHeight;
 
-    private final GreyScalePostProcessEffect bw;
-
     public Application(int windowWidth, int windowHeight) {
         this.windowWidth  = windowWidth;
         this.windowHeight = windowHeight;
@@ -107,9 +106,6 @@ public class Application {
         this.applicationBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, windowWidth, 0, windowHeight));
 
         this.screenManager = new ScreenManager(this);
-
-        //Todo remove
-        this.bw = new GreyScalePostProcessEffect(1f);
     }
 
     public void onWindowResized(int width, int height) {
@@ -127,21 +123,16 @@ public class Application {
 
     public void update(float delta) {
         screenManager.update(delta);
-        bw.update(delta); //TODO - Remove
     }
 
     public void draw() {
-        //Draws screens to screen frame buffer
         screenManager.draw();
-
-        //TODO - Add post processing pipeline...
-        bw.apply(applicationBatch, screenManager.getScreenFrameBuffer().getColorTexture());
 
         //Draws screen frame buffer to the screen
         FrameBufferObject.clearFrameBuffer();
         applicationBatch.begin();
         applicationBatch.setColor(Color.WHITE);
-        applicationBatch.draw(bw.getResultTexture(), 0, 0, windowWidth, windowHeight, 0, 0, 1, 1);
+        applicationBatch.draw(screenManager.getScreenFrameBuffer().getColorTexture(), 0, 0, windowWidth, windowHeight, 0, 0, 1, 1);
         applicationBatch.end();
     }
 
