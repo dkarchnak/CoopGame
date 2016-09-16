@@ -11,6 +11,8 @@ import cz.bcx.coopgame.application.Main;
  * Created by BCX on 6/29/16.
  */
 public abstract class PostProcessEffect {
+    private static final Texture.TextureFiltering DEFAULT_TEXTURE_FILTERING = Texture.TextureFiltering.LinearLinear;
+
     private FrameBufferObject resultBufferObject;
     private float scale;
 
@@ -18,8 +20,12 @@ public abstract class PostProcessEffect {
         this(1f);
     }
 
-    public PostProcessEffect(float scale) {
-        resultBufferObject = new FrameBufferObject((int) (Main.WIDTH * scale), (int) (Main.HEIGHT * scale));
+    PostProcessEffect(float scale) {
+        this(scale, DEFAULT_TEXTURE_FILTERING);
+
+    }
+    public PostProcessEffect(float scale, Texture.TextureFiltering filtering) {
+        resultBufferObject = new FrameBufferObject((int) (Main.WIDTH * scale), (int) (Main.HEIGHT * scale), filtering);
         this.scale = scale;
     }
 

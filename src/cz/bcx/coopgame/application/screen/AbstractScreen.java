@@ -29,6 +29,8 @@ public abstract class AbstractScreen {
 
     public void onUpdate(float delta) {}
 
+    public void onWindowResized(int width, long height) {}
+
     public void onDraw() {}
 
     //Screen input handling methods

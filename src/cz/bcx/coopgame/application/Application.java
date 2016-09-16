@@ -3,6 +3,8 @@ package cz.bcx.coopgame.application;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.screen.ScreenManager;
+import cz.bcx.coopgame.postprocess.BlurPostProcessEffect;
+import cz.bcx.coopgame.postprocess.GreyScalePostProcessEffect;
 import cz.bcx.coopgame.util.Color;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -124,7 +126,6 @@ public class Application {
     }
 
     public void draw() {
-        //Draws screens to screen frame buffer
         screenManager.draw();
 
         //Draws screen frame buffer to the screen

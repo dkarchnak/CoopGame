@@ -1,6 +1,7 @@
 package cz.bcx.coopgame.graphics;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 
@@ -11,11 +12,34 @@ import java.nio.IntBuffer;
  * Created by bcx on 5/12/16.
  */
 public class Texture {
+    public enum TextureFiltering {
+        LinearLinear(GL11.GL_LINEAR, GL11.GL_LINEAR),
+        LinearNearest(GL11.GL_LINEAR, GL11.GL_NEAREST),
+        NearestLinear(GL11.GL_NEAREST, GL11.GL_LINEAR),
+        NearestNearest(GL11.GL_NEAREST, GL11.GL_NEAREST);
+
+        private final int minFilter, magFilter;
+
+        TextureFiltering(int minFilter, int magFilter) {
+            this.minFilter = minFilter;
+            this.magFilter = magFilter;
+        }
+
+        public int getMagFilter() {
+            return magFilter;
+        }
+
+        public int getMinFilter() {
+            return minFilter;
+        }
+    }
+
     private int textureId;
 
     private int width, height, components;
     private boolean destroyed = false;
 
+    //TODO - Add support for TextureFiltering
     public Texture(String file) {
         textureId = GL11.glGenTextures();
         createTextureFromFile(file);
