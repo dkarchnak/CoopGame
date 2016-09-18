@@ -51,6 +51,7 @@ public class StandardBatch {
     /** FIELDS **/
     private Matrix4f projectionMatrix;
 
+    //TODO Pass default shader to constructor as a parameter. Create shader manager.
     private static Shader defaultShader;
     private Shader currentShader;
 

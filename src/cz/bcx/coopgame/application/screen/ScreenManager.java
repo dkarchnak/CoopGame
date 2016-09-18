@@ -155,4 +155,11 @@ public class ScreenManager {
     public TextureAtlasManager getApplicationAtlasManager() {
         return  application.getApplicationAtlasManager();
     }
+
+    public void destroy() {
+        currentScreen.destroy();
+        if(nextScreen != null) nextScreen.destroy();
+
+//        screenStandardBatch.destroy(); TODO
+    }
 }

@@ -63,4 +63,9 @@ public abstract class AbstractScreen {
     public StandardBatch getScreenStandardBatch() {
         return screenManager.getScreenStandardBatch();
     }
+
+    public void destroy() {
+        screenFrameBuffer.destroy();
+        destroyResources();
+    }
 }

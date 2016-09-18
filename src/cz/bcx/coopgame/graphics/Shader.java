@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.graphics;
 
+import cz.bcx.coopgame.application.ResourceDestroyedException;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -23,9 +24,10 @@ public class Shader {
     private static final FloatBuffer matrixFloatBuffer = BufferUtils.createFloatBuffer(4*4);
 
     private int     programId;
-    private String  vertexShaderSource, fragmentShaderSource;
 
     private HashMap<String, Integer> uniforms;
+
+    private boolean destroyed = false;
 
     //TODO - Add some sort of shader manager, which loads all shaders at once
     public Shader(String fileName, String[] uniforms, VertexAttribute[] vertexAttributes) {
@@ -33,9 +35,6 @@ public class Shader {
     }
 
     private Shader(String vertexShaderSource, String fragmentShaderSource, String[] uniforms, VertexAttribute[] vertexAttributes) {
-        this.vertexShaderSource = vertexShaderSource;
-        this.fragmentShaderSource = fragmentShaderSource;
-
         int vertexShader   = compileShader(vertexShaderSource,   GL20.GL_VERTEX_SHADER);
         int fragmentShader = compileShader(fragmentShaderSource, GL20.GL_FRAGMENT_SHADER);
 
@@ -52,6 +51,11 @@ public class Shader {
         GL20.glValidateProgram(programId);
 
         if(GL20.glGetProgrami(programId, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) throw new RuntimeException("Cannot validate shader: " + GL20.glGetShaderInfoLog(programId, 1024));
+
+        GL20.glDetachShader(programId, vertexShader);
+        GL20.glDetachShader(programId, fragmentShader);
+        GL20.glDeleteShader(vertexShader);
+        GL20.glDeleteShader(fragmentShader);
 
         if(uniforms != null) {
             bindUniforms(uniforms);
@@ -116,48 +120,53 @@ public class Shader {
     }
 
     public void use() {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUseProgram(programId);
     }
 
     public int getProgramId() {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         return programId;
-    }
-
-    public String getVertexShaderSource() {
-        return vertexShaderSource;
-    }
-
-    public String getFragmentShaderSource() {
-        return fragmentShaderSource;
     }
 
     ///////////// BLUR_SHADER_UNIFORMS SET ////////////////
     public void setUniformValue1f(String uniformName, float value) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform1f(this.uniforms.get(uniformName), value);
     }
 
     public void setUniformValue2f(String uniformName, float value, float value2) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform2f(this.uniforms.get(uniformName), value, value2);
     }
 
     public void setUniformValueVec2f(String uniformName, Vector2f vector) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform2f(this.uniforms.get(uniformName), vector.x, vector.y);
     }
 
     public void setUniformValue3f(String uniformName, float value, float value2, float value3) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform3f(this.uniforms.get(uniformName), value, value2, value3);
     }
 
     public void setUniformValue3f(String uniformName, Vector3f vector) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform3f(this.uniforms.get(uniformName), vector.x, vector.y, vector.z);
     }
 
     public void setUniformValueMat4f(String uniformName, Matrix4f matrix) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         matrix.get(matrixFloatBuffer);
         GL20.glUniformMatrix4fv(this.uniforms.get(uniformName), false, matrixFloatBuffer);
     }
 
     public void setUniformValue1i(String uniformName, int value) {
+        if(destroyed) throw new ResourceDestroyedException("Shader has been destroyed!");
         GL20.glUniform1i(this.uniforms.get(uniformName), value);
+    }
+
+    public void destroy() {
+       GL20.glDeleteProgram(programId);
     }
 }

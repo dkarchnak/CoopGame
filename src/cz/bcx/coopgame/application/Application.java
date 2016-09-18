@@ -3,8 +3,6 @@ package cz.bcx.coopgame.application;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.screen.ScreenManager;
-import cz.bcx.coopgame.postprocess.BlurPostProcessEffect;
-import cz.bcx.coopgame.postprocess.GreyScalePostProcessEffect;
 import cz.bcx.coopgame.util.Color;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -89,7 +87,7 @@ public class Application {
 /////////////////////////////////////////////////////////////
 /////                   Application                     /////
 /////////////////////////////////////////////////////////////
-    private static final String APPLICATION_TETURE_ATLAS_PATH = "res/atlas.bcx";
+    private static final String APPLICATION_TEXTURE_ATLAS_PATH = "res/atlas.bcx";
 
     private static final int APPLICATION_BATCH_MAX_ENTITIES = 16; //TODO - Tweak
 
@@ -130,7 +128,7 @@ public class Application {
     }
 
     public void loadApplicationAssets() {
-        this.applicationAtlasManager = new TextureAtlasManager(APPLICATION_TETURE_ATLAS_PATH);
+        this.applicationAtlasManager = new TextureAtlasManager(APPLICATION_TEXTURE_ATLAS_PATH);
     }
 
     public void update(float delta) {
@@ -165,6 +163,7 @@ public class Application {
     }
 
     public void destroy() {
+        screenManager.destroy();
         applicationAtlasManager.destroy();
 //        applicationBatch.destroy(); //TODO
 //        screenManager.destroy(); //TODO
