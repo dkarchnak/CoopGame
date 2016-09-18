@@ -122,6 +122,7 @@ public class Main {
 
     private void destroy() {
         //Destroy all resources and rule the World!
+        application.destroy();
     }
 
     public static void main(String[] args) {

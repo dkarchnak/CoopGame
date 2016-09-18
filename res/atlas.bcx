@@ -1,0 +1,22 @@
+##########################
+###      TEXTURES     ####
+##########################
+
+texture 1 {
+    path: res/texture.png
+    filter: linear linear
+}
+
+##########################
+###       REGIONS      ###
+##########################
+
+region 1 {
+    textureKey: 1
+    texCoords: 0 0.5 0.5 1
+}
+
+region 2 {
+    textureKey: 1
+    texCoords: 0.5 0.5 1 1
+}

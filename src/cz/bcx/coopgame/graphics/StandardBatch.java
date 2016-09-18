@@ -165,6 +165,10 @@ public class StandardBatch {
         );
     }
 
+    public void draw(Texture colorTexture, float x, float y, float width, float height) {
+        draw(colorTexture, x, y, width, height, 0.0f, 0.0f, 1.0f, 1.0f);
+    }
+
     public void draw(Texture colorTexture, float x, float y, float width, float height, float u1, float v1, float u2, float v2) {
         if(!drawing) throw new IllegalStateException("You have to call begin() method before drawing!");
 

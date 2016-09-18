@@ -19,9 +19,9 @@ public class FadeScreenTransition extends AbstractScreenTransition {
         batch.setAlpha(alpha);
 
         if(getPercentDone() < 0.5)
-            batch.draw(currentScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT, 0, 0, 1, 1);
+            batch.draw(currentScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT);
         else
-            batch.draw(nextScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT, 0, 0, 1, 1);
+            batch.draw(nextScreenTexture, 0, 0, Main.WIDTH, Main.HEIGHT);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package cz.bcx.coopgame.graphics;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 
@@ -12,37 +11,40 @@ import java.nio.IntBuffer;
  * Created by bcx on 5/12/16.
  */
 public class Texture {
-    public enum TextureFiltering {
-        LinearLinear(GL11.GL_LINEAR, GL11.GL_LINEAR),
-        LinearNearest(GL11.GL_LINEAR, GL11.GL_NEAREST),
-        NearestLinear(GL11.GL_NEAREST, GL11.GL_LINEAR),
-        NearestNearest(GL11.GL_NEAREST, GL11.GL_NEAREST);
+    public enum TextureFilter {
+        Linear(GL11.GL_LINEAR),
+        Nearest(GL11.GL_NEAREST);
 
-        private final int minFilter, magFilter;
+        private final int filter;
 
-        TextureFiltering(int minFilter, int magFilter) {
-            this.minFilter = minFilter;
-            this.magFilter = magFilter;
+        TextureFilter(int filter) {
+            this.filter = filter;
         }
 
-        public int getMagFilter() {
-            return magFilter;
-        }
-
-        public int getMinFilter() {
-            return minFilter;
+        public int getFilter() {
+            return filter;
         }
     }
+
+    private static final TextureFilter DEFAULT_TEXTURE_MIN_FILTER = Texture.TextureFilter.Linear;
+    private static final TextureFilter DEFAULT_TEXTURE_MAG_FILTER = Texture.TextureFilter.Linear;
 
     private int textureId;
 
     private int width, height, components;
     private boolean destroyed = false;
 
-    //TODO - Add support for TextureFiltering
     public Texture(String file) {
+        this(file, DEFAULT_TEXTURE_MIN_FILTER, DEFAULT_TEXTURE_MAG_FILTER);
+    }
+
+    public Texture(String file, TextureFilter minFilter, TextureFilter magFilter) {
         textureId = GL11.glGenTextures();
-        createTextureFromFile(file);
+        createTextureFromFile(
+            file,
+            minFilter == null ? DEFAULT_TEXTURE_MIN_FILTER : minFilter,
+            magFilter == null ? DEFAULT_TEXTURE_MAG_FILTER : magFilter
+        );
     }
 
     public Texture(int textureId, int width, int height, int components) {
@@ -52,7 +54,7 @@ public class Texture {
         this.components = components;
     }
 
-    private void createTextureFromFile(String file) {
+    private void createTextureFromFile(String file, TextureFilter minFilter, TextureFilter magFilter) {
         IntBuffer width  = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
         IntBuffer comps  = BufferUtils.createIntBuffer(1);
@@ -69,8 +71,8 @@ public class Texture {
         int format = components == 3 ? GL11.GL_RGB : GL11.GL_RGBA;
 
         bind();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, minFilter.getFilter());
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, magFilter.getFilter());
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, this.width, this.height, 0, format, GL11.GL_UNSIGNED_BYTE, image);
         unbind();
     }

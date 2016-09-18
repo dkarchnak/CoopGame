@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.application.screen;
 
+import cz.bcx.coopgame.application.TextureAtlasManager;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.Application;
@@ -124,8 +125,7 @@ public class ScreenManager {
                     currentScreen.getScreenFrameBuffer().getColorTexture(),
                     0, 0,
                     getWindowWidth(),
-                    getWindowHeight(),
-                    0, 0, 1, 1
+                    getWindowHeight()
             );
             getApplicationBatch().end();
             screenManagerFrameBuffer.unbindFrameBuffer();
@@ -150,5 +150,9 @@ public class ScreenManager {
 
     public int getWindowHeight() {
         return application.getWindowHeight();
+    }
+
+    public TextureAtlasManager getApplicationAtlasManager() {
+        return  application.getApplicationAtlasManager();
     }
 }

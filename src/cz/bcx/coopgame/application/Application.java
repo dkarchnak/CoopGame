@@ -89,12 +89,16 @@ public class Application {
 /////////////////////////////////////////////////////////////
 /////                   Application                     /////
 /////////////////////////////////////////////////////////////
+    private static final String APPLICATION_TETURE_ATLAS_PATH = "res/atlas.bcx";
+
     private static final int APPLICATION_BATCH_MAX_ENTITIES = 16; //TODO - Tweak
 
     private final KeyboardEvent lastKeyboardEvent = new KeyboardEvent(0, KeyAction.PRESSED, KeyModifier.NONE);
 
     private StandardBatch applicationBatch;
     private ScreenManager screenManager;
+
+    private TextureAtlasManager applicationAtlasManager;
 
     private int windowWidth, windowHeight;
 
@@ -105,9 +109,13 @@ public class Application {
         this.applicationBatch = new StandardBatch(APPLICATION_BATCH_MAX_ENTITIES);
         this.applicationBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, windowWidth, 0, windowHeight));
 
+        //TODO Proper loading...
+        loadApplicationAssets();
+
         this.screenManager = new ScreenManager(this);
     }
 
+    //TODO Resizing...
     public void onWindowResized(int width, int height) {
         this.windowWidth  = width;
         this.windowHeight = height;
@@ -121,6 +129,10 @@ public class Application {
         screenManager.handleKeyboardEvent(lastKeyboardEvent);
     }
 
+    public void loadApplicationAssets() {
+        this.applicationAtlasManager = new TextureAtlasManager(APPLICATION_TETURE_ATLAS_PATH);
+    }
+
     public void update(float delta) {
         screenManager.update(delta);
     }
@@ -132,7 +144,7 @@ public class Application {
         FrameBufferObject.clearFrameBuffer();
         applicationBatch.begin();
         applicationBatch.setColor(Color.WHITE);
-        applicationBatch.draw(screenManager.getScreenManagerFrameBuffer().getColorTexture(), 0, 0, windowWidth, windowHeight, 0, 0, 1, 1);
+        applicationBatch.draw(screenManager.getScreenManagerFrameBuffer().getColorTexture(), 0, 0, windowWidth, windowHeight);
         applicationBatch.end();
     }
 
@@ -146,5 +158,15 @@ public class Application {
 
     public StandardBatch getApplicationBatch() {
         return applicationBatch;
+    }
+
+    public TextureAtlasManager getApplicationAtlasManager() {
+        return applicationAtlasManager;
+    }
+
+    public void destroy() {
+        applicationAtlasManager.destroy();
+//        applicationBatch.destroy(); //TODO
+//        screenManager.destroy(); //TODO
     }
 }

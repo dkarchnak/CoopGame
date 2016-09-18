@@ -3,6 +3,7 @@ package cz.bcx.coopgame.application.screen;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.Application;
+import cz.bcx.coopgame.graphics.TextureRegion;
 
 /**
  * Created by BCX on 7/25/2016.
@@ -45,6 +46,10 @@ public abstract class AbstractScreen {
         FrameBufferObject.clearFrameBuffer();
         onDraw();
         screenFrameBuffer.unbindFrameBuffer();
+    }
+
+    public TextureRegion getApplicationTextureRegion(int key) {
+        return screenManager.getApplicationAtlasManager().getTextureRegion(key);
     }
 
     public ScreenManager getScreenManager() {

@@ -1,6 +1,5 @@
 package cz.bcx.coopgame.application.screen;
 
-import cz.bcx.coopgame.graphics.Texture;
 import cz.bcx.coopgame.graphics.TextureRegion;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.Log;
@@ -10,8 +9,8 @@ import cz.bcx.coopgame.application.screen.transition.FadeScreenTransition;
  * Created by BCX on 7/26/2016.
  */
 public class IntroScreen2 extends AbstractScreen {
+    private static final int TEXTURE_KEY = 2;
 
-    private Texture texture;
     private TextureRegion region;
 
     public IntroScreen2(ScreenManager screenManager) {
@@ -20,14 +19,7 @@ public class IntroScreen2 extends AbstractScreen {
 
     @Override
     public void loadResources() {
-        texture = new Texture("res/placeholder2.jpg");
-        region  = new TextureRegion(texture, 0f, 0f, 1f, 1f);
-    }
-
-    @Override
-    public void destroyResources() {
-        texture.destroy();
-        region = null;
+        region = getApplicationTextureRegion(TEXTURE_KEY);
     }
 
     @Override
