@@ -42,6 +42,7 @@ public class Application {
         CONTROL_ALT       (CONTROL.keyModifier | ALT.keyModifier);
         //Fuck super key! Who uses super key anyway?
         //Looking at you OSX users!
+        //EDIT 1/21/2017 - I'm using super key now =D. I switched to i3WM.
 
         private int keyModifier;
 
@@ -62,10 +63,6 @@ public class Application {
         public KeyAction    action;
         public KeyModifier  modifier;
 
-        public KeyboardEvent() {
-            this(-1, KeyAction.PRESSED, KeyModifier.NONE);
-        }
-
         public KeyboardEvent(int key, KeyAction action, KeyModifier modifier) {
             this.key = key;
             this.action = action;
@@ -80,7 +77,8 @@ public class Application {
 
         @Override
         public String toString() {
-            return "[" + getClass().getSimpleName() + "] Key: " + key + ", KeyAction: " + action + ((modifier != KeyModifier.NONE) ? (", Modifier: " + modifier) : "");
+            return getClass().getSimpleName() + ": [Key: " + key + ", KeyAction: " + action +
+                    ((modifier != KeyModifier.NONE) ? (", Modifier: " + modifier) : "") + "]";
         }
     }
 
