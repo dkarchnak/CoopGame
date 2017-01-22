@@ -1,7 +1,9 @@
 package cz.bcx.coopgame.graphics;
 
 import cz.bcx.coopgame.application.Log;
+import cz.bcx.coopgame.application.Main;
 
+import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -11,19 +13,19 @@ import java.util.regex.Pattern;
  * Created by bcx on 11/25/16.
  */
 public class BitmapFont {
-    private static final String REGEX_INTEGER = "[+-]?[0-9]+";
+    private static final String REGEX_INTEGER       = "[+-]?[0-9]+";
     private static final String REGEX_INTEGER_GROUP = "(" + REGEX_INTEGER + ")";
-    private static final String REGEX_WHITE_SPACE = "\\s+";
+    private static final String REGEX_WHITE_SPACE   = "\\s+";
 
     private static final String REGEX_SINGLE_CHAR = "char" + REGEX_WHITE_SPACE +
-            "id=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "x=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "y=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "width=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "height=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "xoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "yoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-            "xadvance=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE;
+                                                        "id=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "x=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "y=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "width=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "height=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "xoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "yoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
+                                                        "xadvance=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE;
 
     private static final int REGEX_GROUP_CHAR_ID        = 1;
     private static final int REGEX_GROUP_CHAR_X         = 2;
@@ -36,16 +38,19 @@ public class BitmapFont {
 
 
     public class Glyph {
-        private char character;
-        private int x, y;
+        private Character character;
+        private float u, v, u2, v2;
         private int width, height;
         private int offsetX, offsetY;
         private final int xAdvance;
 
-        public Glyph(char character, int x, int y, int width, int height, int offsetX, int offsetY, int xAdvance) {
+        public Glyph(Character character, float u, float v, float u2, float v2, int width, int height, int offsetX, int offsetY, int xAdvance) {
             this.character = character;
-            this.x = x;
-            this.y = y;
+
+            //UV Coords
+            this.u = u; this.v = v;
+            this.u2 = u2; this.v2 = v2;
+
             this.width = width;
             this.height = height;
             this.offsetX = offsetX;
@@ -53,13 +58,13 @@ public class BitmapFont {
             this.xAdvance = xAdvance;
         }
 
-        public char getCharacter() {
+        public Character getCharacter() {
             return character;
         }
 
         @Override
         public String toString() {
-            return getClass().getSimpleName() + ": [Character='" + character + "', X=" + x + ", Y=" +  y +
+            return getClass().getSimpleName() + ": [Character='" + character + "'" +
                     ", Width=" + width + ", Height=" + height + ", OffsetX=" + offsetX + ", OffsetY=" + offsetY +
                     ", XAdvance=" + xAdvance + "]";
         }
@@ -75,6 +80,7 @@ public class BitmapFont {
         this.fontTexture = texture;
     }
 
+    //TODO - Add full support for .fnt files. Kernings, Lineheight, Base, ScaleW/H... Pages?!
     public void load() {
         if (file == null || !file.exists()) {
             throw new RuntimeException("Bitmap font file with path: '" + file.getAbsolutePath() + "' doesn't exist!");
@@ -99,15 +105,25 @@ public class BitmapFont {
                 matcher = pattern.matcher(currentLine);
 
                 if(matcher.find()) {
+                    int x      = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X));
+                    int y      = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y));
+                    int width  = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_WIDTH));
+                    int height = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_HEIGHT));
 
                     Glyph glyph = new Glyph(
-                        (char)(Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_ID))), //actual char
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X)),
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y)),
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_WIDTH)),
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_HEIGHT)),
+                        //Actual char
+                        (char)(Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_ID))),
+                        //UV Coords. OpenGL textures Y is flipped!
+                        x / (float)fontTexture.getWidth(),
+                        1 - ((y + height) / (float)fontTexture.getHeight()),
+                        (x + width) / (float)fontTexture.getWidth(),
+                        1 - (y / (float)fontTexture.getWidth()),
+                        //Glyph dimensions
+                        width,
+                        height,
+                        //Offsets and XAdvance. Calculates correct Y offset.
                         Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X_OFFSET)),
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y_OFFSET)),
+                        height + Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y_OFFSET)),
                         Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X_ADVANCE))
                     );
                     resultMap.put(glyph.getCharacter(), glyph);
@@ -119,6 +135,6 @@ public class BitmapFont {
             Log.error(getClass(), "Cannot read glyph file: " + file.getName() + "!", e);
         }
 
-        return characterMap;
+        return resultMap;
     }
 }
