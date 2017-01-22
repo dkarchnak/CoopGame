@@ -1,9 +1,7 @@
 package cz.bcx.coopgame.graphics;
 
 import cz.bcx.coopgame.application.Log;
-import cz.bcx.coopgame.application.Main;
 
-import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -13,28 +11,29 @@ import java.util.regex.Pattern;
  * Created by bcx on 11/25/16.
  */
 public class BitmapFont {
-    private static final String REGEX_INTEGER       = "[+-]?[0-9]+";
-    private static final String REGEX_INTEGER_GROUP = "(" + REGEX_INTEGER + ")";
-    private static final String REGEX_WHITE_SPACE   = "\\s+";
+    private static final String REGEX_INTEGER             = "[+-]?[0-9]+";
+    private static final String REGEX_NAMED_GROUP_INTEGER = "(?<%s>" + REGEX_INTEGER + ")"; //Use String.format to fill in the name!
+    private static final String REGEX_WHITE_SPACE         = "\\s+";
+
+    private static final String REGEX_NAME_KEY_ID         = "id";
+    private static final String REGEX_NAME_KEY_X          = "x";
+    private static final String REGEX_NAME_KEY_Y          = "y";
+    private static final String REGEX_NAME_KEY_WIDTH      = "width";
+    private static final String REGEX_NAME_KEY_HEIGHT     = "height";
+    private static final String REGEX_NAME_KEY_X_OFFSET   = "xOffset";
+    private static final String REGEX_NAME_KEY_Y_OFFSET   = "yOffset";
+    private static final String REGEX_NAME_KEY_X_ADVANCE  = "xAdvance";
 
     private static final String REGEX_SINGLE_CHAR = "char" + REGEX_WHITE_SPACE +
-                                                        "id=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "x=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "y=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "width=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "height=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "xoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "yoffset=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE +
-                                                        "xadvance=" + REGEX_INTEGER_GROUP + REGEX_WHITE_SPACE;
+                                                        "id="       + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_ID)        + REGEX_WHITE_SPACE +
+                                                        "x="        + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_X)         + REGEX_WHITE_SPACE +
+                                                        "y="        + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_Y)         + REGEX_WHITE_SPACE +
+                                                        "width="    + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_WIDTH)     + REGEX_WHITE_SPACE +
+                                                        "height="   + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_HEIGHT)    + REGEX_WHITE_SPACE +
+                                                        "xoffset="  + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_X_OFFSET)  + REGEX_WHITE_SPACE +
+                                                        "yoffset="  + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_Y_OFFSET)  + REGEX_WHITE_SPACE +
+                                                        "xadvance=" + String.format(REGEX_NAMED_GROUP_INTEGER, REGEX_NAME_KEY_X_ADVANCE) + REGEX_WHITE_SPACE;
 
-    private static final int REGEX_GROUP_CHAR_ID        = 1;
-    private static final int REGEX_GROUP_CHAR_X         = 2;
-    private static final int REGEX_GROUP_CHAR_Y         = 3;
-    private static final int REGEX_GROUP_CHAR_WIDTH     = 4;
-    private static final int REGEX_GROUP_CHAR_HEIGHT    = 5;
-    private static final int REGEX_GROUP_CHAR_X_OFFSET  = 6;
-    private static final int REGEX_GROUP_CHAR_Y_OFFSET  = 7;
-    private static final int REGEX_GROUP_CHAR_X_ADVANCE = 8;
 
 
     public class Glyph {
@@ -105,14 +104,14 @@ public class BitmapFont {
                 matcher = pattern.matcher(currentLine);
 
                 if(matcher.find()) {
-                    int x      = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X));
-                    int y      = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y));
-                    int width  = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_WIDTH));
-                    int height = Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_HEIGHT));
+                    int x      = Integer.parseInt(matcher.group(REGEX_NAME_KEY_X));
+                    int y      = Integer.parseInt(matcher.group(REGEX_NAME_KEY_Y));
+                    int width  = Integer.parseInt(matcher.group(REGEX_NAME_KEY_WIDTH));
+                    int height = Integer.parseInt(matcher.group(REGEX_NAME_KEY_HEIGHT));
 
                     Glyph glyph = new Glyph(
                         //Actual char
-                        (char)(Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_ID))),
+                        (char)(Integer.parseInt(matcher.group(REGEX_NAME_KEY_ID))),
                         //UV Coords. OpenGL textures Y is flipped!
                         x / (float)fontTexture.getWidth(),
                         1 - ((y + height) / (float)fontTexture.getHeight()),
@@ -122,9 +121,9 @@ public class BitmapFont {
                         width,
                         height,
                         //Offsets and XAdvance. Calculates correct Y offset.
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X_OFFSET)),
-                        height + Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_Y_OFFSET)),
-                        Integer.parseInt(matcher.group(REGEX_GROUP_CHAR_X_ADVANCE))
+                        Integer.parseInt(matcher.group(REGEX_NAME_KEY_X_OFFSET)),
+                        height + Integer.parseInt(matcher.group(REGEX_NAME_KEY_Y_OFFSET)),
+                        Integer.parseInt(matcher.group(REGEX_NAME_KEY_X_ADVANCE))
                     );
                     resultMap.put(glyph.getCharacter(), glyph);
                     glyphCount++;
