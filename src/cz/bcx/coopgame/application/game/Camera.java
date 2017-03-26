@@ -30,7 +30,7 @@ public class Camera {
     }
 
     public void setCameraPositionByCenter(Vector3f cameraCenterPosition) {
-        this.cameraPosition.set(cameraCenterPosition.x + width/2, cameraCenterPosition.y + height/2, cameraCenterPosition.z);
+        this.cameraPosition.set(cameraCenterPosition.x - width/2f, cameraCenterPosition.y - height/2f, cameraCenterPosition.z);
     }
 
     public Vector3f getCameraPosition() {

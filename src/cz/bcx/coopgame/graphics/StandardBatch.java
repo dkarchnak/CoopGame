@@ -95,7 +95,7 @@ public class StandardBatch {
 
     public void setViewMatrixByCamera(Camera camera) {
         this.viewMatrix.identity();
-        this.viewMatrix.translate(camera.getCameraPosition());
+        this.viewMatrix.translate(-camera.getCameraPosition().x, -camera.getCameraPosition().y, -camera.getCameraPosition().z);
     }
 
     public void begin() {
