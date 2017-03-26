@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform mat4 u_ProjMatrix;
+uniform mat4 u_ViewMatrix;
 uniform sampler2D u_TexColor; //TODO texture id or something
 uniform int u_BlurMatrixSize; //in pixels
 uniform float u_PixelSize;

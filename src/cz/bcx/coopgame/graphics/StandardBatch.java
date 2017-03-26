@@ -20,9 +20,9 @@ public class StandardBatch {
 
     private static final int               DEFAULT_MAX_ENTITIES_PER_CALL = 1024;
 
-    public static  final VertexAttribute   ATTRIBUTE_POSITION   = new VertexAttribute(0, "in_Position");
-    public static  final VertexAttribute   ATTRIBUTE_COLOR      = new VertexAttribute(1, "in_Color");
-    public static  final VertexAttribute   ATTRIBUTE_TEX_COORDS = new VertexAttribute(2, "in_TexCoords");
+    protected static  final VertexAttribute   ATTRIBUTE_POSITION   = new VertexAttribute(0, "in_Position");
+    protected static  final VertexAttribute   ATTRIBUTE_COLOR      = new VertexAttribute(1, "in_Color");
+    protected static  final VertexAttribute   ATTRIBUTE_TEX_COORDS = new VertexAttribute(2, "in_TexCoords");
 
     public static  final VertexAttribute[]  VERTEX_ATTRIBUTES    = new VertexAttribute[] {
         ATTRIBUTE_POSITION,
@@ -30,11 +30,13 @@ public class StandardBatch {
         ATTRIBUTE_TEX_COORDS
     };
 
-    public static  final String  UNIFORM_PROJECTION_MATRIX  = "u_ProjMatrix";
-    public static  final String  UNIFORM_COLOR_TEXTURE_UNIT = "u_TexColor";
+    protected static  final String  UNIFORM_PROJECTION_MATRIX  = "u_ProjMatrix";
+    protected static  final String  UNIFORM_VIEW_MATRIX        = "u_ViewMatrix";
+    protected static  final String  UNIFORM_COLOR_TEXTURE_UNIT = "u_TexColor";
 
-    public static final String[] UNIFORMS = new String[] {
+    protected static final String[] UNIFORMS = new String[] {
         UNIFORM_PROJECTION_MATRIX,
+        UNIFORM_VIEW_MATRIX,
         UNIFORM_COLOR_TEXTURE_UNIT
     };
 
@@ -50,9 +52,10 @@ public class StandardBatch {
 
     /** FIELDS **/
     private Matrix4f projectionMatrix;
+    private Matrix4f viewMatrix;
 
     //TODO Pass default shader to constructor as a parameter. Create shader manager.
-    private static Shader defaultShader;
+    private Shader defaultShader;
     private Shader currentShader;
 
     private Texture currentColorTexture;
@@ -78,11 +81,17 @@ public class StandardBatch {
 
         defaultShader = new Shader(DEFAULT_SHADER_NAME, UNIFORMS, VERTEX_ATTRIBUTES);
         currentShader = defaultShader;
+
+        setViewMatrix(new Matrix4f().identity());
     }
 
 
     public void setProjectionMatrix(Matrix4f projectionMatrix) {
         this.projectionMatrix = projectionMatrix;
+    }
+
+    public void setViewMatrix(Matrix4f viewMatrix) {
+        this.viewMatrix = viewMatrix;
     }
 
     public void begin() {
@@ -130,6 +139,7 @@ public class StandardBatch {
             currentShader.use();
 
             currentShader.setUniformValueMat4f(UNIFORM_PROJECTION_MATRIX, projectionMatrix);
+            currentShader.setUniformValueMat4f(UNIFORM_VIEW_MATRIX, viewMatrix);
             currentShader.setUniformValue1i(UNIFORM_COLOR_TEXTURE_UNIT, 0);
 
             if(vaoId == -1) prepareVAO();

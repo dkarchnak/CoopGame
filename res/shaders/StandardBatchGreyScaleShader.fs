@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform mat4 u_ProjMatrix;
+uniform mat4 u_ViewMatrix;
 uniform sampler2D u_TexColor;
 uniform float greyStrength;
 
