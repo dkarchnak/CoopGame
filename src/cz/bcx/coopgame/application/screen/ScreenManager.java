@@ -73,11 +73,11 @@ public class ScreenManager {
         return changingScreens;
     }
 
-    public void onWindowResized(int width, long height) {
+    public void onWindowResized(int width, int height) {
         //TODO resize FBOs
         this.screenStandardBatch.setProjectionMatrix(new Matrix4f().setOrtho2D(0, width, 0, height));
-        currentScreen.onWindowResized(width, height);
-        if(nextScreen != null) nextScreen.onWindowResized(width, height);
+        currentScreen.windowResized(width, height);
+        if(nextScreen != null) nextScreen.windowResized(width, height);
     }
 
     public void update(float delta) {

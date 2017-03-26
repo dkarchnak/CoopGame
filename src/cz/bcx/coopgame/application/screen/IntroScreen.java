@@ -4,6 +4,7 @@ import cz.bcx.coopgame.graphics.TextureRegion;
 import cz.bcx.coopgame.application.Application;
 import cz.bcx.coopgame.application.Log;
 import cz.bcx.coopgame.application.screen.transition.FadeScreenTransition;
+import org.joml.Vector3f;
 
 /**
  * Created by BCX on 7/26/2016.
@@ -23,15 +24,18 @@ public class IntroScreen extends AbstractScreen {
     }
 
     @Override
-    public void onUpdate(float delta) {}
+    public void onUpdate(float delta) {
+        //Camera's center (0, 0) is center of the screen.
+        getScreenCamera().setCameraPositionByCenter(new Vector3f());
+    }
 
     @Override
     public void onDraw() {
         getScreenStandardBatch().begin();
         getScreenStandardBatch().draw(
                 region,
-                getScreenManager().getWindowWidth() / 2 - 200,
-                getScreenManager().getWindowHeight() / 2 - 200,
+                -200,
+                -200,
                 400,
                 400
         );

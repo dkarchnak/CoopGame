@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.graphics;
 
+import cz.bcx.coopgame.application.game.Camera;
 import cz.bcx.coopgame.util.Color;
 import cz.bcx.coopgame.util.MathUtil;
 import org.joml.Matrix4f;
@@ -82,7 +83,9 @@ public class StandardBatch {
         defaultShader = new Shader(DEFAULT_SHADER_NAME, UNIFORMS, VERTEX_ATTRIBUTES);
         currentShader = defaultShader;
 
-        setViewMatrix(new Matrix4f().identity());
+        //Default OGL projection matrix
+        projectionMatrix = new Matrix4f().ortho2D(-1, 1, -1, 1);
+        viewMatrix = new Matrix4f().identity();
     }
 
 
@@ -90,8 +93,9 @@ public class StandardBatch {
         this.projectionMatrix = projectionMatrix;
     }
 
-    public void setViewMatrix(Matrix4f viewMatrix) {
-        this.viewMatrix = viewMatrix;
+    public void setViewMatrixByCamera(Camera camera) {
+        this.viewMatrix.identity();
+        this.viewMatrix.translate(camera.getCameraPosition());
     }
 
     public void begin() {

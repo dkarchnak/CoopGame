@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.application.screen;
 
+import cz.bcx.coopgame.application.game.Camera;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
 import cz.bcx.coopgame.application.Application;
@@ -12,10 +13,12 @@ public abstract class AbstractScreen {
     private final ScreenManager screenManager;
 
     private FrameBufferObject screenFrameBuffer;
+    private Camera screenCamera;
 
     public AbstractScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
         this.screenFrameBuffer = new FrameBufferObject(screenManager.getWindowWidth(), screenManager.getWindowHeight());
+        this.screenCamera = new Camera(screenManager.getWindowWidth(), screenManager.getWindowHeight());
     }
 
     public void loadResources() {};
@@ -28,11 +31,11 @@ public abstract class AbstractScreen {
     public void onLeaving() {} //Transition start
     public void onLeave() {} //Transition finish
 
-    public void onUpdate(float delta) {}
+    protected void onUpdate(float delta) {}
 
-    public void onWindowResized(int width, long height) {}
+    protected void onWindowResized(int width, long height) {}
 
-    public void onDraw() {}
+    protected void onDraw() {}
 
     //Screen input handling methods
     public void handleKeyboardEvent(Application.KeyboardEvent keyboardEvent) {}
@@ -41,7 +44,14 @@ public abstract class AbstractScreen {
         onUpdate(delta);
     }
 
+    public void windowResized(int width, int height) {
+        screenCamera.setCameraDimensions(width, height);
+        onWindowResized(width, height);
+    }
+
     public void draw() {
+        getScreenStandardBatch().setViewMatrixByCamera(screenCamera);
+
         screenFrameBuffer.bindFrameBuffer();
         FrameBufferObject.clearFrameBuffer();
         onDraw();
@@ -62,6 +72,10 @@ public abstract class AbstractScreen {
 
     public StandardBatch getScreenStandardBatch() {
         return screenManager.getScreenStandardBatch();
+    }
+
+    public Camera getScreenCamera() {
+        return screenCamera;
     }
 
     public void destroy() {
