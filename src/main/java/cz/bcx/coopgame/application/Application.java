@@ -163,7 +163,7 @@ public class Application {
     public void destroy() {
         screenManager.destroy();
         applicationAtlasManager.destroy();
-//        applicationBatch.destroy(); //TODO
-//        screenManager.destroy(); //TODO
+        applicationBatch.destroy();
+        screenManager.destroy();
     }
 }

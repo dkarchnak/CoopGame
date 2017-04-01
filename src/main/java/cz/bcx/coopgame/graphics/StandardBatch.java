@@ -17,8 +17,9 @@ import java.nio.FloatBuffer;
  * Created by bcx on 9.5.16.
  */
 public class StandardBatch {
-    private static final String            DEFAULT_SHADER_NAME  = "StandardBatchShader";
+    private static final String            DEFAULT_SHADER_NAME           = "StandardBatchShader";
 
+    private static final int               DEFAULT_VAO_VBO_ID            = -1;
     private static final int               DEFAULT_MAX_ENTITIES_PER_CALL = 1024;
 
     protected static  final VertexAttribute   ATTRIBUTE_POSITION   = new VertexAttribute(0, "in_Position");
@@ -64,8 +65,8 @@ public class StandardBatch {
     private FloatBuffer buffer;
     private int entitiesToDraw = 0;
 
-    private int vaoId = -1;
-    private int vboId = -1;
+    private int vaoId = DEFAULT_VAO_VBO_ID;
+    private int vboId = DEFAULT_VAO_VBO_ID;
 
     private Color color = DEFAULT_COLOR;
 
@@ -248,5 +249,16 @@ public class StandardBatch {
 
     public Shader getCurrentShader() {
         return currentShader;
+    }
+
+    public void destroy() {
+        if(defaultShader != null) defaultShader.destroy();
+        defaultShader = null;
+
+        if(vboId != DEFAULT_VAO_VBO_ID) GL15.glDeleteBuffers(vboId);
+        if(vaoId != DEFAULT_VAO_VBO_ID) GL30.glDeleteVertexArrays(vaoId);
+
+        buffer = null;
+        currentColorTexture = null;
     }
 }

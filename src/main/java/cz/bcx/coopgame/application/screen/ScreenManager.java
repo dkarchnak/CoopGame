@@ -160,6 +160,6 @@ public class ScreenManager {
         currentScreen.destroy();
         if(nextScreen != null) nextScreen.destroy();
 
-//        screenStandardBatch.destroy(); TODO
+        screenStandardBatch.destroy();
     }
 }
