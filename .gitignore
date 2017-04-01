@@ -17,4 +17,5 @@ out/
 hs_err_pid*
 
 #Actual Project
-output/
+build/
+.gradle/
