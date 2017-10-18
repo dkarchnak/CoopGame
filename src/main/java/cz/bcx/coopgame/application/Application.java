@@ -13,6 +13,7 @@ public class Application {
 /////                  INPUT EVENTS                     /////
 /////////////////////////////////////////////////////////////
     public enum KeyAction {
+        NONE     (-1),
         PRESSED  (GLFW.GLFW_PRESS),
         RELEASED (GLFW.GLFW_RELEASE),
         REPEAT   (GLFW.GLFW_REPEAT);
@@ -27,7 +28,7 @@ public class Application {
             for(KeyAction keyAction : KeyAction.values()) {
                 if(keyAction.keyAction == action) return keyAction;
             }
-            return KeyAction.PRESSED;
+            return KeyAction.NONE;
         }
     }
 
@@ -63,11 +64,7 @@ public class Application {
         public KeyAction    action;
         public KeyModifier  modifier;
 
-        public KeyboardEvent(int key, KeyAction action, KeyModifier modifier) {
-            this.key = key;
-            this.action = action;
-            this.modifier = modifier;
-        }
+        private KeyboardEvent() {}
 
         public void set(int key, KeyAction action, KeyModifier modifier) {
             this.key = key;
@@ -82,6 +79,27 @@ public class Application {
         }
     }
 
+    public static class MouseEvent {
+        public int       key;
+        public KeyAction action;
+        public int       x, y;
+
+        private MouseEvent() {}
+
+        public void set(int key, KeyAction keyAction, int x, int y) {
+            this.key = key;
+            this.action = keyAction;
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + ": [Key: " + key + ", KeyAction: " + action +
+                    ", x: " + x + ", y " + y + "]";
+        }
+    }
+
 /////////////////////////////////////////////////////////////
 /////                   Application                     /////
 /////////////////////////////////////////////////////////////
@@ -89,7 +107,8 @@ public class Application {
 
     private static final int APPLICATION_BATCH_MAX_ENTITIES = 16; //TODO - Tweak
 
-    private final KeyboardEvent lastKeyboardEvent = new KeyboardEvent(0, KeyAction.PRESSED, KeyModifier.NONE);
+    private final KeyboardEvent lastKeyboardEvent = new KeyboardEvent();
+    private final MouseEvent    lastMouseEvent    = new MouseEvent();
 
     private StandardBatch applicationBatch;
     private ScreenManager screenManager;
@@ -123,6 +142,11 @@ public class Application {
     public void handleKeyboardEvent(int key, int action, int mods) {
         lastKeyboardEvent.set(key, KeyAction.getKeyAction(action), KeyModifier.getModifier(mods));
         screenManager.handleKeyboardEvent(lastKeyboardEvent);
+    }
+
+    public void handleMouseEvent(int key, int action, int x, int y) {
+        lastMouseEvent.set(key, KeyAction.getKeyAction(action), x, y);
+        screenManager.handleMouseEvent(lastMouseEvent);
     }
 
     public void loadApplicationAssets() {

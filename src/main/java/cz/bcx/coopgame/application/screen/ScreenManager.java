@@ -1,5 +1,6 @@
 package cz.bcx.coopgame.application.screen;
 
+import cz.bcx.coopgame.application.Log;
 import cz.bcx.coopgame.application.TextureAtlasManager;
 import cz.bcx.coopgame.graphics.FrameBufferObject;
 import cz.bcx.coopgame.graphics.StandardBatch;
@@ -56,6 +57,10 @@ public class ScreenManager {
 
     public void handleKeyboardEvent(Application.KeyboardEvent keyboardEvent) {
         currentScreen.handleKeyboardEvent(keyboardEvent);
+    }
+
+    public void handleMouseEvent(Application.MouseEvent mouseEvent) {
+        Log.debug(getClass(), mouseEvent);
     }
 
     public void changeScreen(Class<? extends AbstractScreen> screen, AbstractScreenTransition screenTransition) {

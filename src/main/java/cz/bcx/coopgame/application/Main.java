@@ -9,15 +9,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Main {
     public static String WINDOW_TITLE = "Coop Game INDEV";
-    public static int    WIDTH        = 1280;
-    public static int    HEIGHT       = (int) (WIDTH / 16f * 9f);
+    public static int    WIDTH        = 1024;
+    public static int    HEIGHT       = 1024;//(int) (WIDTH / 16f * 9f);
 
     //Actual application
     private Application application;
 
     //We need to strongly reference callback instances.
-    private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
+    private GLFWErrorCallback     errorCallback;
+    private GLFWKeyCallback       keyCallback;
+    private GLFWCursorPosCallback cursorPosCallback;
 
     //The window handle
     private long window;
@@ -67,6 +68,13 @@ public class Main {
             }
         });
 
+        glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                application.handleMouseEvent(-1, -1, (int)xpos, (int)ypos);
+            }
+        });
+
         //Get the resolution of the primary monitor
         GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -76,9 +84,6 @@ public class Main {
                 (videoMode.width()  - WIDTH)  / 2,
                 (videoMode.height() - HEIGHT) / 2
         );
-
-        //Disables cursor
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         //Make the OpenGL context current
         glfwMakeContextCurrent(window);
